@@ -48,7 +48,13 @@
                     </svg>
                     <svg fill="#f92e2e" width="62.5" height="62.5" viewBox="0 0 1920 1920" xmlns="" onclick="watchReset()">
                         <path d="M960 0v213.333c411.627 0 746.667 334.934 746.667 746.667S1371.627 1706.667 960 1706.667 213.333 1371.733 213.333 960c0-197.013 78.4-382.507 213.334-520.747v254.08H640V106.667H53.333V320h191.04C88.64 494.08 0 720.96 0 960c0 529.28 430.613 960 960 960s960-430.72 960-960S1489.387 0 960 0" fill-rule="evenodd"/>
-                    </svg>   
+                    </svg>  
+                    <div ><button class="laps"onclick="recordLap()">Laps</button></div> 
+                    <div ><button class="laps"onclick="ClearLaps()">Clear Laps</button></div> 
+                    <div class="laps">
+                        <h3>Laps:</h3>
+                        <ul id="lapList"></ul>
+                    </div>
                 </div>
 
 
@@ -61,46 +67,71 @@
 
             </div>
         </footer>
-        <script>
-            let [miliseconds, seconds, minuts, hours]=[0,0,0,0];
-            let time=document.getElementById("time");
-            let timer=null;
-            function watch(){
-                miliseconds++;
-                if(miliseconds==100){
-                    miliseconds=0;
-                    seconds++;
-                    if(seconds==60){
-                        seconds=0;
-                        minuts++;
-                        if(minuts==60){
-                            minuts=0;
-                            hours++;
-                        }
-                    }
-                }
-                let h = hours< 10 ? "0"+hours:hours;
-                let m = minuts< 10 ? "0"+minuts:minuts;
-                let s = seconds< 10 ? "0"+seconds:seconds;
-                let ms = miliseconds< 10 ? "0"+miliseconds:miliseconds;
-                time.innerHTML=h+":"+m+":"+s+":"+ms;
+        <script>let [miliseconds, seconds, minuts, hours]=[0,0,0,0];
+let time=document.getElementById("time");
+let timer=null;
+let laps = [];
+function watch(){
+    miliseconds++;
+    if(miliseconds==100){
+        miliseconds=0;
+        seconds++;
+        if(seconds==60){
+            seconds=0;
+            minuts++;
+            if(minuts==60){
+                minuts=0;
+                hours++;
             }
-            function watchStart(){
-                if(timer!== null){
-                    clearInterval(timer);
-                }
-                timer=setInterval(watch,1);
-            }
-            function watchStop(){
-                clearInterval(timer);
-            }
-            function watchReset(){
-                clearInterval(timer);
-                let [miliseconds, seconds, minuts, hours]=[0,0,0,0];
-                time.innerHTML="00:00:00:00"
-            }
-           
-        </script>   
+        }
+    }
+    let h = hours< 10 ? "0"+hours:hours;
+    let m = minuts< 10 ? "0"+minuts:minuts;
+    let s = seconds< 10 ? "0"+seconds:seconds;
+    let ms = miliseconds< 10 ? "0"+miliseconds:miliseconds;
+    time.innerHTML=h+":"+m+":"+s+":"+ms;
+}
+function watchStart(){
+    if(timer!== null){
+        clearInterval(timer);
+    }
+    timer=setInterval(watch,1);
+}
+function watchStop(){
+    clearInterval(timer);
+}
+function watchReset(){
+    clearInterval(timer);
+    let [miliseconds, seconds, minuts, hours]=[0,0,0,0];
+    time.innerHTML="00:00:00:00"
+}
+function ClearLaps() {
+laps = [];  
+displayLaps(); 
+time.innerHTML = "00:00:00:00";
+}
+function recordLap() {
+let currentLapTime = formatTime(hours, minuts, seconds, miliseconds);
+laps.push(currentLapTime); 
+displayLaps(); 
+}
+function displayLaps() {
+let lapList = document.getElementById("lapList");
+lapList.innerHTML = ""; 
+laps.forEach((lap, index) => {
+let lapItem = document.createElement("li");
+lapItem.textContent = `Lap ${index + 1}: ${lap}`;
+lapList.appendChild(lapItem);
+});
+}
+function formatTime(h, m, s, ms) {
+let hour = h < 10 ? "0" + h : h;
+let minute = m < 10 ? "0" + m : m;
+let second = s < 10 ? "0" + s : s;
+let millisecond = ms < 10 ? "0" + ms : ms;
+return `${hour}:${minute}:${second}:${millisecond}`;
+}</script>
+        
 </body>
 
 </html>
